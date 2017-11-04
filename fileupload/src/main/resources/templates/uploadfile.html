@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/header::common-header" />
+<!-- NAVBAR
+================================================== -->
+<body>
+
+	<div th:replace="common/header::navbar"></div>
+
+	<div class="container">
+		<div class="table-responsive"
+			th:if="${not #lists.isEmpty(directories)}">
+			<table id="directories"
+				class="table table-hover table-sm table-responsive ">
+				<thead class="thead-inverse">
+					<tr>
+						<th>Code</th>
+						<th>Name</th>
+						<th>Comments</th>
+						<th>File Upload</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="directory: ${directories}">
+						<td th:text="${directory.code}"></td>
+						<td th:text="${directory.name}"></td>
+						<td th:text="${directory.comments}"></td>
+						<td>
+							<form th:id="'uploadfileform-'+${directory.code}">
+								<div class="form-group">
+									<label class="custom-file"> <input type="file"
+										th:name="uploadfile" accept="*" aria-describedby="fileHelp"
+										class="custom-file-input" /> <span
+										class="custom-file-control"></span>
+									</label>
+								</div>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+
+		<!-- Javascript functions -->
+		<script>
+			$(document).ready(function() {
+				$('input[type="file"]').change(function(e) {
+					//id is undefined
+					var id = $(this).attr('id');
+					console.log("id=" + id)
+					//FAILS
+					var res = id.split("-");
+					// I pass the code
+					uploadFile(res[1]);
+				});
+			});
+
+			/**
+			 * Upload the file sending it via Ajax at the Spring Boot server.
+			 */
+			function uploadFile(id) {
+				$
+						.ajax({
+							url : "/uploadFile",
+							type : "POST",
+							data : new FormData($("#uploadfileform-" + id)[0]),
+							enctype : 'multipart/form-data',
+							processData : false,
+							contentType : false,
+							cache : false,
+							success : function() {
+								// Handle upload success
+								$("#upload-file-message").text(
+										"File succesfully uploaded");
+								alert("File succesfully uploaded");
+								
+							},
+							error : function() {
+								// Handle upload error
+								$("#upload-file-message")
+										.text(
+												"File not uploaded (perhaps it's too much big)");
+								alert("File not uploaded (perhaps it's too much big)");
+							}
+						});
+			} // function uploadFile
+		</script>
+
+
+
+		<div th:replace="common/header::footer"></div>
+	</div>
+
+	<div th:replace="common/header::body-bottom-scripts"></div>
+</body>
+
+</html>
+
