@@ -31,7 +31,8 @@
 								<div class="form-group">
 									<label class="custom-file"> <input type="file"
 										th:name="uploadfile" accept="*" aria-describedby="fileHelp"
-										class="custom-file-input" /> <span
+										class="custom-file-input"
+										th:id="'uploadfileinput-'+${directory.code}" /> <span
 										class="custom-file-control"></span>
 									</label>
 								</div>
@@ -47,11 +48,13 @@
 		<script>
 			$(document).ready(function() {
 				$('input[type="file"]').change(function(e) {
-					//id is undefined
+					
 					var id = $(this).attr('id');
 					console.log("id=" + id)
-					//FAILS
+					
 					var res = id.split("-");
+					
+					console.log("code: "+res[1]);
 					// I pass the code
 					uploadFile(res[1]);
 				});
@@ -75,7 +78,7 @@
 								$("#upload-file-message").text(
 										"File succesfully uploaded");
 								alert("File succesfully uploaded");
-								
+
 							},
 							error : function() {
 								// Handle upload error
